@@ -43,7 +43,7 @@ def load_csv(path: Path) -> list[Email]:
             )
     return emails
 
-
+# reads the email header (sender, receiver, subject, date)
 def parse_txt(path: Path) -> Email:
     text = path.read_text(encoding="utf-8", errors="replace")
     subject, sender = "", ""
