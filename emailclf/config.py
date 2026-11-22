@@ -78,6 +78,10 @@ OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "").strip() or None  # e.g. Ollam
 PRICE_IN_PER_MTOK = _optional_float("PRICE_IN_PER_MTOK")
 PRICE_OUT_PER_MTOK = _optional_float("PRICE_OUT_PER_MTOK")
 
+IMAP_HOST = os.getenv("IMAP_HOST", "imap.gmail.com").strip()
+IMAP_USER = os.getenv("IMAP_USER", "").strip()
+IMAP_PASSWORD = os.getenv("IMAP_PASSWORD", "")
+
 # Never send more than this many characters of an email to the LLM (cost control).
 MAX_EMAIL_CHARS = 4000
 

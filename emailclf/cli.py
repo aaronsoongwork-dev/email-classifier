@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+from regex import sub
+
+from .data_io import Email, load_csv, load_emails, load_imap
+
 import argparse
 import csv
 import json
@@ -189,7 +193,7 @@ def cmd_rules_report(args) -> None:
 
 def cmd_classify(args) -> None:
     _mock_warning(args.backend)
-    emails = load_emails(args.input)
+    emails = load_imap(args.limit) if args.imap else load_emails(args.input)
     if not emails:
         sys.exit(f"No emails found at {args.input}")
     pipeline = _build_pipeline(args)
@@ -290,6 +294,9 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--show-words", action="store_true", help="print the top words per class")
     p.set_defaults(func=cmd_train)
 
+    p.add_argument("--imap", action="store_true", help="read the newest emails from your IMAP inbox instead of --input")
+    p.add_argument("--limit", type=int, default=50, help="how many inbox emails to fetch with --imap")
+
     for name, func, help_ in [
         ("evaluate", cmd_evaluate, "metrics + confusion matrix on the labelled test set"),
         ("sweep", cmd_sweep, "how coverage/accuracy change with the confidence threshold"),
@@ -308,6 +315,8 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--input", default=str(config.DATA_DIR / "sample_inbox"))
     p.add_argument("--output", default=str(config.OUTPUT_DIR / "predictions.csv"))
     p.add_argument("--extract", action="store_true", help="also extract company/role/deadline/actions (uses the LLM provider)")
+    p.add_argument("--imap", action="store_true", help="read the newest emails from your IMAP inbox instead of --input")
+    p.add_argument("--limit", type=int, default=50, help="how many inbox emails to fetch with --imap")
     p.set_defaults(func=cmd_classify)
 
     p = sub.add_parser("review", help="fix needs_review emails; corrections become training data")
